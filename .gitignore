@@ -1,0 +1,8 @@
+#ignore the bkp files
+*.*~
+*.pdf
+.tags
+*.pyc
+*.zip
+*.log
+*.csv
