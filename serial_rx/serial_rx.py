@@ -74,7 +74,7 @@ if __name__ == "__main__":
         ## for slack machine w/adapter
         s_port = serial_cls(SerialCb, '/dev/ttyUSB0')
 
-    elif self.t.GetCurrentSystem() == 'debian':
+    elif local_distro == 'Raspbian GNU/Linux':
         ## for rpi
         s_port = serial_cls(SerialCb, '/dev/serial0')
 
