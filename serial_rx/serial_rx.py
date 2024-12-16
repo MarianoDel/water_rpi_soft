@@ -47,6 +47,7 @@ def SerialCb (dataread):
 
         srx_comma = srx.find(',') + 1
         srx = srx[srx_comma:]
+        print(srx)
         SaveToMeas(srx)
 
     elif srx.startswith('uptime hours'):
@@ -97,18 +98,18 @@ if __name__ == "__main__":
         s_port.Write("uptime\r\n")        
 
         # loop always, wait for comms callback
-        # loop_always = True
-        # while loop_always:
-        #     time.sleep(0.1)
-        #     if s_port.port_open == False:
-        #         print("port closed! reboot")        
-        #         SaveToLog("port closed! reboot")
-        #         s_port.Close()
-        #         loop_always = False
+        loop_always = True
+        while loop_always:
+            time.sleep(0.1)
+            if s_port.port_open == False:
+                print("port closed! reboot")        
+                SaveToLog("port closed! reboot")
+                s_port.Close()
+                loop_always = False
 
         ## serialmock answers
         # answer for uptime
-        SerialCb("uptime hours 60000\r\n")
+        # SerialCb("uptime hours 60000\r\n")
         # ten minutes meas
-        SerialCb("last_10_all,2,0,0,0,2\r\n")
+        # SerialCb("last_10_all,2,0,0,0,2\r\n")
         
