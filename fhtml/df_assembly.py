@@ -5,6 +5,7 @@ import sys
 # pulses file location
 files_dir = '../../'
 file_name = 'master_meas.csv'
+current_file_dir = '../serial_rx/'
 
 
 def DataFrameAssembly (init_date_str, end_date_str, ten_min=True):
@@ -29,12 +30,24 @@ def DataFrameAssembly (init_date_str, end_date_str, ten_min=True):
 
     # create dummys directories
     df_list = []
+
+    # remember to check for today
+    today_str = datetime.today().strftime("%Y%m%d")
+    print("today " + today_str)
     
     for d in range(date_delta.days + 1):
         days_delta = timedelta(days=d)
         date_to_log = init_date + days_delta
         date_to_log_str = date_to_log.strftime("%Y%m%d")
-        date_to_log_fullpath_str = files_dir + date_to_log_str + '/' + file_name
+
+        # check for today
+        if date_to_log_str == today_str:
+            print('date is today, get current meas file')
+            date_to_log_fullpath_str = current_file_dir + file_name
+            # print(date_to_log_fullpath_str)
+        else:
+            date_to_log_fullpath_str = files_dir + date_to_log_str + '/' + file_name
+            
         try:
             pulse_df = pd.read_csv (date_to_log_fullpath_str, header=None, usecols=[0, 1])
             df_list.append(pulse_df)
