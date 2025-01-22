@@ -1,6 +1,11 @@
 from fasthtml.common import *
 from datetime import datetime
 
+from df_assembly import DataFrameAssembly
+
+# Globals
+# global_conf_ten_minutes = True
+global_conf_ten_minutes = False
 
 app,rt = fast_app()
 
@@ -43,6 +48,15 @@ def get():
 
 @rt("/load_table")
 def post(start_date: str, end_date: str):
-    return P(start_date, end_date)
+    df_err, df = DataFrameAssembly(start_date, end_date, global_conf_ten_minutes)
+    if df is None:
+        df_data = 'Some error while looking data: ' + df_err
+    else:
+        df.columns = ['Date and Time', 'Pulses']
+        # df_data = NotStr(df.to_html(header=False,index=False))
+        df_data = NotStr(df.to_html(index=False))        
+    
+    return Div(P('from: ' + start_date + ' to: ' + end_date),
+               Div(df_data))
 
 serve()
