@@ -45,7 +45,7 @@ def nav_div():
                      hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")
         b4 =  Button('By Hours', cls='outline secondary')
         
-    return Nav(Ul(Li(Strong('Atlantis Water Meter'))),
+    return Nav(Ul(Li(Strong('Water Meter'))),
                Ul(Li(b1)),
                Ul(Li(b2)),
                Ul(Li(b3)),
@@ -56,13 +56,14 @@ def nav_div():
 def get():
     date_now = datetime.today()
     today = date_now.strftime("%Y-%m-%d")
-    return Div(Div(nav_div(),id="my_nav_div"),
-               H2('Pick dates:'),
-               Form(Input(name="start_date", type="date", value='2025-01-01'),
-                    Input(name="end_date", type="date", value=today),
-                    Button("Submit", type="submit",
-                           hx_post="/load_table", hx_target="#my_table", hx_swap="innerHTML")),
-               Div(id="my_table"))
+    return Titled(('Atlantis'),
+                  Div(Div(nav_div(),id="my_nav_div"),
+                      H2('Pick dates:'),
+                      Form(Input(name="start_date", type="date", value='2025-01-01'),
+                           Input(name="end_date", type="date", value=today),
+                           Button("Submit", type="submit",
+                                  hx_post="/load_table", hx_target="#my_table", hx_swap="innerHTML")),
+                      Div(id="my_table")))
 
 
 @rt("/load_table")
