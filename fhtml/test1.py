@@ -113,4 +113,20 @@ def post():
     return Div(nav_div())
 
 
-serve()
+# @rt("/favicon.ico")
+# def get():
+#     print("---try to get")
+#     return FileResponse('./static/favicon2.ico')
+
+# @rt("/{fname:path}.{ext:static}")
+# def static(fname: str, ext: str):
+#     print("---try to get")
+#     return FileResponse(f'{fname}.{ext}')
+
+
+@rt("/{fname:path}.{ext:static}")
+def get():
+    return FileResponse('./static/favicon2.ico')
+
+
+serve(port=5000)
