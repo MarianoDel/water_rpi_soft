@@ -38,12 +38,12 @@ def nav_div():
         
     if global_conf_ten_minutes == True:
         b3 =  Button('By Ten Mins', cls='outline secondary')
-        b4 =  Button('By Hour', cls='secondary',
+        b4 =  Button('By Hours', cls='secondary',
                      hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")        
     else:
         b3 =  Button('By Ten Mins', cls='secondary',
                      hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")
-        b4 =  Button('By Hour', cls='outline secondary')
+        b4 =  Button('By Hours', cls='outline secondary')
         
     return Nav(Ul(Li(Strong('Atlantis Water Meter'))),
                Ul(Li(b1)),
@@ -78,7 +78,8 @@ def post(start_date: str, end_date: str):
     if global_conf_table == True:
         resp = Div(H3('Table:'),
                    P('from: ' + start_date + ' to: ' + end_date),
-                   Div(df_data))
+                   Div(df_data),
+                   H1('Total Pulses between dates: ' + str(df['Pulses'].sum())))
     else:
         resp = Div(H3('Graphs:'),
                Div(Strong("Plot 1: Line Chart"),
