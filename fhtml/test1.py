@@ -56,7 +56,7 @@ def nav_div():
 def get():
     date_now = datetime.today()
     today = date_now.strftime("%Y-%m-%d")
-    return Titled(('Atlantis'),
+    return Titled(('Tcp-Water'),
                   Div(Div(nav_div(),id="my_nav_div"),
                       H2('Pick dates:'),
                       Form(Input(name="start_date", type="date", value='2025-01-01'),
@@ -71,23 +71,25 @@ def post(start_date: str, end_date: str):
     df_err, df = DataFrameAssembly(start_date, end_date, global_conf_ten_minutes)
     if df is None:
         df_data = 'Some error while looking data: ' + df_err
+        resp = Div(P('from: ' + start_date + ' to: ' + end_date),
+                   Div(df_data))
+
     else:
         df.columns = ['Date and Time', 'Pulses']
         # df_data = NotStr(df.to_html(header=False,index=False))
         df_data = NotStr(df.to_html(index=False))        
 
-    if global_conf_table == True:
-        resp = Div(H3('Table:'),
-                   P('from: ' + start_date + ' to: ' + end_date),
-                   Div(df_data),
-                   H1('Total Pulses between dates: ' + str(df['Pulses'].sum())))
-    else:
-        resp = Div(H3('Graphs:'),
-               Div(Strong("Plot 1: Line Chart"),
-                    Div(generate_line_chart(df)),),
-                Div(Strong("Plot 2: Bar Chart"),
-                    Div(generate_bar_chart(df)),),
-               )
+        if global_conf_table == True:
+            resp = Div(H3('Table:'),
+                       P('from: ' + start_date + ' to: ' + end_date),
+                       Div(df_data),
+                       H1('Total Pulses between dates: ' + str(df['Pulses'].sum())))
+        else:
+            resp = Div(H3('Graphs:'),
+                       Div(Strong("Plot 1: Line Chart"),
+                           Div(generate_line_chart(df)),),
+                       Div(Strong("Plot 2: Bar Chart"),
+                           Div(generate_bar_chart(df)),))
     
     return resp
 
