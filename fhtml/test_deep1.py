@@ -31,7 +31,7 @@ def button_group(group_num, names):
             hx_vals={'group': group_num, 'button': names[1]},
             hx_target=f"#group{group_num}"
         ),
-        Class="button-group",
+        cls="button-group",
         id=f"group{group_num}"
     )
 
@@ -136,7 +136,7 @@ def index():
                 button_group(1, ("Table", "Graph")),
                 button_group(2, ("Minutes", "Hours")),
                 button_group(3, ("Liters", "Gallons")),
-                Class="container"
+                cls="container"
             )
         )
     )
@@ -238,7 +238,7 @@ def toggle_group(group: str, button: str):
         ("Minutes", "Hours") if group_num == 2 else
         ("Liters", "Gallons"))
 
-serve(port=8000)
+serve(port=5000)
 
 
 

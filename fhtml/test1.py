@@ -13,7 +13,12 @@ global_conf_ten_minutes = False
 global_conf_table = False
 global_conf_pulses = False
 
-app,rt = fast_app(hdrs=(plotly_headers,))
+# hdrs = (picolink, Script(src='https://cdn.tailwindcss.com'), plotly_headers)
+pico_colors = Link(rel="stylesheet", href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css')
+hdrs = (picolink, plotly_headers,pico_colors,)
+
+# hdrs = (plotly_headers)
+app,rt = fast_app(hdrs=hdrs)
 
 
 def generate_line_chart(my_df,xdef='Date and Time',ydef='Pulses'):
@@ -54,18 +59,59 @@ def nav_div():
                      hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")
         b6 =  Button(' By Hours  ', cls='outline secondary')
         
-    return Div(Nav(
-        Ul(Li(H4('Units:'))),
-        Ul(Li(b1)),
-        Ul(Li(b2))),
-               Nav(
-        Ul(Li(H4('Data Presented:'))),
-        Ul(Li(b3)),
-        Ul(Li(b4))),
-               Nav(
-        Ul(Li(H4('Data Spaced:'))),
-        Ul(Li(b5)),
-        Ul(Li(b6))))
+    return Div(
+        Nav(
+            Ul(Li(H4('Units:'))),
+            Ul(Li(b1)),
+            Ul(Li(b2))),
+        Nav(
+            Ul(Li(H4('Data Presented:'))),
+            Ul(Li(b3)),
+            Ul(Li(b4))),
+        Nav(
+            Ul(Li(H4('Data Spaced:'))),
+            Ul(Li(b5)),
+            Ul(Li(b6))))
+
+
+def nav_div_grid():
+    if global_conf_pulses == True:
+        # Button("Pulses", style="color: #005fff; background-color:Tomato;"),
+        # Div(H3("Prueba Color Pico"),
+        #     style="text-align: center; color: #005fff; border: 3px solid green; padding: 10px 0;"),
+        b1 =  Button('Pulses', cls='outline secondary')
+        b2 =  Button('Gallons', cls='secondary',
+                     hx_post="/config_units", hx_target='#my_nav_div', hx_swap="innerHTML")        
+    else:
+        b1 =  Button('Pulses', cls='secondary',
+                     hx_post="/config_units", hx_target='#my_nav_div', hx_swap="innerHTML")
+        b2 =  Button('Gallons', cls='outline secondary')
+
+    if global_conf_table == True:
+        b3 =  Button('Table', cls='outline secondary')
+        b4 =  Button('Graphs', cls='secondary',
+                     hx_post="/config_table", hx_target='#my_nav_div', hx_swap="innerHTML")        
+    else:
+        b3 =  Button('Table', cls='secondary',
+                     hx_post="/config_table", hx_target='#my_nav_div', hx_swap="innerHTML")
+        b4 =  Button('Graphs', cls='outline secondary')
+        
+    if global_conf_ten_minutes == True:
+        b5 =  Button('Ten Mins', cls='outline secondary')
+        b6 =  Button('Hours', cls='secondary',
+                     hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")        
+    else:
+        b5 =  Button('Ten Mins', cls='secondary',
+                     hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")
+        b6 =  Button('Hours', cls='outline secondary')
+        
+    return Div(Div(H3("Units:"), b1, b2, cls='grid'),
+               Div(H3()),
+               Div(H3("Data Presentation:"), b3, b4, cls='grid'),
+               Div(H3()),
+               Div(H3("Data Spaced:"), b5, b6, cls='grid'),
+               Div(H3()),
+               )
 
 
 @rt("/")
@@ -73,14 +119,15 @@ def get():
     date_now = datetime.today()
     today = date_now.strftime("%Y-%m-%d")
     return Titled(('Tcp-Water'),
-                  Div(Div(nav_div(),id="my_nav_div"),
+                  Div(Div(nav_div_grid(),id="my_nav_div"),
                       H2('Pick dates:'),
                       Form(Input(name="start_date", type="date", value='2025-01-01'),
                            Input(name="end_date", type="date", value=today),
                            Div(Button("Submit", type="submit",
                                       hx_post="/load_table", hx_target="#my_table", hx_swap="innerHTML"),
                                hx_get="/progress", hx_target="#my_table"),
-                      Div(id="my_table"))))
+                           Div(id="my_table"))),
+                  )
 
     # return Titled(('Tcp-Water'),
     #               Div(Div(nav_div(),id="my_nav_div"),
@@ -153,7 +200,7 @@ def post():
     else:
         global_conf_table = True
         
-    return Div(nav_div())
+    return Div(nav_div_grid())
 
 
 @rt("/config_ten_min")
@@ -164,7 +211,7 @@ def post():
     else:
         global_conf_ten_minutes = True
         
-    return Div(nav_div())
+    return Div(nav_div_grid())
 
 
 @rt("/config_units")
@@ -175,7 +222,7 @@ def post():
     else:
         global_conf_pulses = True
         
-    return Div(nav_div())
+    return Div(nav_div_grid())
 
 
 @rt("/progress")
