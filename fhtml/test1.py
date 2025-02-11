@@ -74,36 +74,25 @@ def nav_div():
             Ul(Li(b6))))
 
 
-def nav_div_grid():
-    if global_conf_pulses == True:
+def button_my_nav_div (btn_name, btn_link, btn_state):
+    btn_cls = 'secondary'
+    if btn_state == True:
+        btn_cls = 'outline secondary'
+    return Button (btn_name, cls=btn_cls, hx_post=btn_link, hx_target='#my_nav_div', hx_swap="innerHTML")
+
         # Button("Pulses", style="color: #005fff; background-color:Tomato;"),
         # Div(H3("Prueba Color Pico"),
         #     style="text-align: center; color: #005fff; border: 3px solid green; padding: 10px 0;"),
-        b1 =  Button('Pulses', cls='outline secondary')
-        b2 =  Button('Gallons', cls='secondary',
-                     hx_post="/config_units", hx_target='#my_nav_div', hx_swap="innerHTML")        
-    else:
-        b1 =  Button('Pulses', cls='secondary',
-                     hx_post="/config_units", hx_target='#my_nav_div', hx_swap="innerHTML")
-        b2 =  Button('Gallons', cls='outline secondary')
 
-    if global_conf_table == True:
-        b3 =  Button('Table', cls='outline secondary')
-        b4 =  Button('Graphs', cls='secondary',
-                     hx_post="/config_table", hx_target='#my_nav_div', hx_swap="innerHTML")        
-    else:
-        b3 =  Button('Table', cls='secondary',
-                     hx_post="/config_table", hx_target='#my_nav_div', hx_swap="innerHTML")
-        b4 =  Button('Graphs', cls='outline secondary')
-        
-    if global_conf_ten_minutes == True:
-        b5 =  Button('Ten Mins', cls='outline secondary')
-        b6 =  Button('Hours', cls='secondary',
-                     hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")        
-    else:
-        b5 =  Button('Ten Mins', cls='secondary',
-                     hx_post="/config_ten_min", hx_target='#my_nav_div', hx_swap="innerHTML")
-        b6 =  Button('Hours', cls='outline secondary')
+def nav_div_grid():
+    b1 = button_my_nav_div ('Pulses', '/config_units/pulses', global_conf_pulses)
+    b2 = button_my_nav_div ('Gallons', '/config_units/gallons', not global_conf_pulses)
+
+    b3 = button_my_nav_div ('Table', '/config_table/table', global_conf_table)
+    b4 = button_my_nav_div ('Graphs', '/config_table/graph', not global_conf_table)
+
+    b5 = button_my_nav_div ('Ten Mins', '/config_ten_min/ten_mins', global_conf_ten_minutes)
+    b6 = button_my_nav_div ('Hours', '/config_ten_min/hours', not global_conf_ten_minutes)
         
     return Div(Div(H3("Units:"), b1, b2, cls='grid'),
                Div(H3()),
@@ -192,35 +181,35 @@ def post(start_date: str, end_date: str):
     return resp
 
 
-@rt("/config_table")
-def post():
+@rt("/config_table/{conf}")
+def post(conf: str):
     global global_conf_table
-    if global_conf_table == True:
-        global_conf_table = False
-    else:
+    if conf == 'table':
         global_conf_table = True
+    else:
+        global_conf_table = False
         
     return Div(nav_div_grid())
 
 
-@rt("/config_ten_min")
-def post():
+@rt("/config_ten_min/{conf}")
+def post(conf: str):
     global global_conf_ten_minutes
-    if global_conf_ten_minutes ==True:
-        global_conf_ten_minutes = False
-    else:
+    if conf == 'ten_mins':
         global_conf_ten_minutes = True
-        
+    else:
+        global_conf_ten_minutes = False
+
     return Div(nav_div_grid())
 
 
-@rt("/config_units")
-def post():
+@rt("/config_units/{conf}")
+def post(conf: str):
     global global_conf_pulses
-    if global_conf_pulses ==True:
-        global_conf_pulses = False
-    else:
+    if conf == 'pulses':
         global_conf_pulses = True
+    else:
+        global_conf_pulses = False
         
     return Div(nav_div_grid())
 
