@@ -81,10 +81,13 @@ def SerialCb (dataread):
             hour_cnt -= 1
         else:
             if total_int > 30:
+                date_now = datetime.today()
+                date_to_log = date_now.strftime("%Y-%m-%d -- %H:%M")
                 hour_cnt = 6
                 print('reporting')
-                msg = f"'More than 30 pulses in last hour, exactly: {total_int}'" 
-                os.system("python3 sendmail.py marianodeleu@yahoo.com.ar ALERT " + msg)
+                sub = "'ALERT tcpwater'"
+                msg = f"'More than 30 pulses in last hour\n {date_to_log} pulses: {total_int}'" 
+                os.system("python3 sendmail.py marianodeleu@yahoo.com.ar " + sub + " " + msg)
                 # os.system('python3 reconfigure.py 1')
             
 
