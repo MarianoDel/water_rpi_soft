@@ -11,6 +11,10 @@ from serialcomm_mock import SerialCommMock
 import sys
 # end of for mock serial
 
+# for sendmail
+import os
+# end of for sendmail
+
 
 def GetDistro ():
     linux_name = distro.name()
@@ -35,7 +39,11 @@ def SaveToLog (line):
         f.write(line + '\n')
         
 
+meas_str_list = ['','','','','','']
+hour_cnt = 0
 def SerialCb (dataread):
+    global meas_str_list
+    global hour_cnt
     # strip the end of line
     srx = dataread.rstrip('\n')
     srx = srx.rstrip('\r')
@@ -49,6 +57,36 @@ def SerialCb (dataread):
         srx = srx[srx_comma:]
         print(srx)
         SaveToMeas(srx)
+
+        print('init')
+        print(f'orig list: {meas_str_list} new val: {srx_list[1]}')
+        meas_str_list[5] = meas_str_list[4]
+        meas_str_list[4] = meas_str_list[3]
+        meas_str_list[3] = meas_str_list[2]
+        meas_str_list[2] = meas_str_list[1]
+        meas_str_list[1] = meas_str_list[0]
+        meas_str_list[0] = srx_list[1]
+        print('end')
+        print(meas_str_list)
+
+        total_int = 0
+        for x in range(6):
+            try:
+                total_int += int(meas_str_list[x])
+            except:
+                pass
+
+        print(f'total_int: {total_int}')
+        if hour_cnt:
+            hour_cnt -= 1
+        else:
+            if total_int > 30:
+                hour_cnt = 6
+                print('reporting')
+                msg = f"'More than 30 pulses in last hour, exactly: {total_int}'" 
+                os.system("python3 sendmail.py marianodeleu@yahoo.com.ar ALERT " + msg)
+                # os.system('python3 reconfigure.py 1')
+            
 
     elif srx.startswith('uptime hours'):
         # log the uptime

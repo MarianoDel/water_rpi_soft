@@ -1,5 +1,6 @@
 from fasthtml.common import *
 from datetime import datetime
+import time
 
 from df_assembly import DataFrameAssembly
 
@@ -144,6 +145,7 @@ def get():
 @rt("/load_table")
 def post(start_date: str, end_date: str):
     df_err, df = DataFrameAssembly(start_date, end_date, global_conf_ten_minutes)
+    time.sleep(0.5)
     if df is None:
         df_data = 'Some error while looking data: ' + df_err
         resp = Div(P('from: ' + start_date + ' to: ' + end_date),
